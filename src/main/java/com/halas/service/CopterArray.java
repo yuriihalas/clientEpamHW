@@ -1,4 +1,4 @@
-package com.halas.rest;
+package com.halas.service;
 
 import com.halas.soap.Copter;
 
@@ -11,7 +11,6 @@ public class CopterArray {
 
     public CopterArray() {
     }
-
 
     public List<Copter> getCopters() {
         if (copters == null) {

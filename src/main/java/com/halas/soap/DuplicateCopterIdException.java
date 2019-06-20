@@ -1,4 +1,3 @@
-
 package com.halas.soap;
 
 import javax.xml.bind.annotation.XmlAccessType;

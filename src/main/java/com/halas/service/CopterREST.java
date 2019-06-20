@@ -1,6 +1,7 @@
-package com.halas.rest;
+package com.halas.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.halas.CopterService;
 import com.halas.soap.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,9 +14,9 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.halas.rest.consts.ConstCopterREST.*;
+import static com.halas.service.consts.ConstCopterREST.*;
 
-public class CopterREST {
+public class CopterREST implements CopterService {
     private static final Logger LOG = LogManager.getLogger(CopterREST.class);
 
     private RestTemplate restTemplate;
@@ -27,132 +28,137 @@ public class CopterREST {
     }
 
     public List<Copter> getAllCopters() {
-        ResponseEntity<Object> copterResponse = restTemplate.exchange(ALL_COPTERS_URL,
+        LOG.info("method getAllCopters.");
+        ResponseEntity<Object> copterResponse = restTemplate.exchange(GET_ALL_COPTERS_URL,
                 HttpMethod.GET, null, Object.class);
-
         if (copterResponse.getStatusCode() != HttpStatus.OK) {
             LOG.warn(EMPTY_LIST_COPTERS);
             return new ArrayList<>();
         }
-
+        LOG.info(SUCCESS_ACTION);
         return mapper.convertValue(copterResponse.getBody(), CopterArray.class).getCopters();
     }
 
-    public Copter createCopter(Copter copter) throws DuplicateCopterIdException {
+    public boolean createCopter(Copter copter) throws DuplicateCopterIdException_Exception {
+        LOG.info("method createCopter.");
         HttpEntity<Copter> requestEntity = new HttpEntity<>(copter);
-
         ResponseEntity<Object> copterResponse = restTemplate.exchange(CREATE_COPTER_URL,
                 HttpMethod.POST, requestEntity, Object.class);
-
         if (copterResponse.getStatusCode() == HttpStatus.CREATED) {
             LOG.info(SUCCESS_ACTION);
-            return mapper.convertValue(copterResponse.getBody(), Copter.class);
+            return true;
         }
-
         if (copterResponse.getStatusCode() == HttpStatus.SEE_OTHER) {
             LOG.error(String.format(ID_EXIST_BAD_FORMAT, copter.getId()));
-            throw new DuplicateCopterIdException();
+            throw new DuplicateCopterIdException_Exception();
         }
-
-        //if not expected status
         LOG.fatal(NOT_EXPECTED_STATUS);
-        return new Copter();
+        return false;
     }
 
-    public Copter deleteCopter(Integer id) throws NoSuchCopterIdException {
+    public boolean deleteCopter(int id) throws NoSuchCopterIdException_Exception {
+        LOG.info("method deleteCopter.");
         ResponseEntity<Object> copterResponse = restTemplate.exchange(
                 String.format(DELETE_URL, id), HttpMethod.DELETE,
                 null, Object.class);
-
         if (copterResponse.getStatusCode() == HttpStatus.OK) {
             LOG.info(SUCCESS_ACTION);
-            return mapper.convertValue(copterResponse.getBody(), Copter.class);
+            return true;
         }
-
         if (copterResponse.getStatusCode() == HttpStatus.BAD_REQUEST) {
             LOG.error(String.format(FAILURE_FORMAT, ID_NOT_EXISTS));
-            throw new NoSuchCopterIdException();
+            throw new NoSuchCopterIdException_Exception();
         }
-
-        //if not expected status
         LOG.fatal(NOT_EXPECTED_STATUS);
-        return new Copter();
+        return false;
     }
 
-
-    public Position moveToPositionById(Integer id, Position newPosition)
-            throws MaximumDistanceExceededException,
-            NoSuchCopterIdException {
+    public boolean moveToPositionById(int id, Position newPosition)
+            throws MaximumDistanceExceededException_Exception,
+            NoSuchCopterIdException_Exception {
+        LOG.info("method moveToPositionById.");
         HttpEntity<Position> requestEntity = new HttpEntity<>(newPosition);
-
         ResponseEntity<Object> positionResponse = restTemplate.exchange(
                 String.format(MOVE_TO_POSITION_BY_ID_URL, id), HttpMethod.PUT,
                 requestEntity, Object.class);
-
         return commonChangePosition(positionResponse);
     }
 
-    public Position moveToPositionByIdWithDegree(Integer id, Double degree)
-            throws MaximumDistanceExceededException, NoSuchCopterIdException {
+    public boolean moveToPositionByIdWithDegree(int id, double degree)
+            throws MaximumDistanceExceededException_Exception, NoSuchCopterIdException_Exception {
+        LOG.info("method moveToPositionByIdWithDegree.");
         ResponseEntity<Object> positionResponse = restTemplate.exchange(
                 String.format(MOVE_TO_POSITION_WITH_DEGREE_URL, id, degree),
                 HttpMethod.PUT, null, Object.class);
-
         return commonChangePosition(positionResponse);
     }
 
-    public Position moveUp(Integer id) throws MaximumDistanceExceededException,
-            NoSuchCopterIdException {
+    public boolean moveUp(int id) throws MaximumDistanceExceededException_Exception,
+            NoSuchCopterIdException_Exception {
+        LOG.info("method moveUp.");
         ResponseEntity<Object> positionEntity = restTemplate.exchange(
                 String.format(MOVE_UP_URL, id), HttpMethod.PUT,
                 null, Object.class);
-
         return commonChangePosition(positionEntity);
     }
 
-    public Position moveDown(Integer id) throws MaximumDistanceExceededException, NoSuchCopterIdException {
+    public boolean moveDown(int id) throws MaximumDistanceExceededException_Exception, NoSuchCopterIdException_Exception {
+        LOG.info("method moveDown.");
         ResponseEntity<Object> positionEntity = restTemplate.exchange(
                 String.format(MOVE_DOWN_URL, id), HttpMethod.PUT,
                 null, Object.class);
-
         return commonChangePosition(positionEntity);
     }
 
-    public Copter holdPosition(Integer id) throws NoSuchCopterIdException {
+    public boolean holdPosition(int id) throws NoSuchCopterIdException_Exception {
+        LOG.info("method holdPosition.");
         ResponseEntity<Object> positionResponse = restTemplate.exchange(
                 String.format(HOLD_POSITION_URL, id), HttpMethod.PUT,
                 null, Object.class);
+        if (positionResponse.getStatusCode() == HttpStatus.OK) {
+            LOG.info(SUCCESS_ACTION);
+            return true;
+        }
+        if (positionResponse.getStatusCode() == HttpStatus.BAD_REQUEST) {
+            LOG.error(String.format(FAILURE_FORMAT, ID_NOT_EXISTS));
+            throw new NoSuchCopterIdException_Exception();
+        }
+        LOG.fatal(NOT_EXPECTED_STATUS);
+        return false;
+    }
 
+    public Copter findCopter(int id) throws NoSuchCopterIdException_Exception {
+        LOG.info("method holdPosition.");
+        ResponseEntity<Object> positionResponse = restTemplate.exchange(
+                String.format(GET_FIND_COPTER_BY_ID, id), HttpMethod.GET,
+                null, Object.class);
         if (positionResponse.getStatusCode() == HttpStatus.OK) {
             LOG.info(SUCCESS_ACTION);
             return mapper.convertValue(positionResponse.getBody(), Copter.class);
         }
         if (positionResponse.getStatusCode() == HttpStatus.BAD_REQUEST) {
             LOG.error(String.format(FAILURE_FORMAT, ID_NOT_EXISTS));
-            throw new NoSuchCopterIdException();
+            throw new NoSuchCopterIdException_Exception();
         }
-
-        //if not expected status
         LOG.fatal(NOT_EXPECTED_STATUS);
         return new Copter();
     }
 
-    private Position commonChangePosition(ResponseEntity positionResponse) throws MaximumDistanceExceededException, NoSuchCopterIdException {
+    private boolean commonChangePosition(ResponseEntity positionResponse)
+            throws MaximumDistanceExceededException_Exception, NoSuchCopterIdException_Exception {
         if (positionResponse.getStatusCode() == HttpStatus.OK) {
             LOG.info(SUCCESS_ACTION);
-            return mapper.convertValue(positionResponse.getBody(), Position.class);
+            return true;
         }
         if (positionResponse.getStatusCode() == HttpStatus.CONFLICT) {
             LOG.error(String.format(FAILURE_FORMAT, MAXIMUM_DISTANCE_EXECUTED));
-            throw new MaximumDistanceExceededException();
+            throw new MaximumDistanceExceededException_Exception();
         }
         if (positionResponse.getStatusCode() == HttpStatus.BAD_REQUEST) {
             LOG.error(String.format(FAILURE_FORMAT, ID_NOT_EXISTS));
-            throw new NoSuchCopterIdException();
+            throw new NoSuchCopterIdException_Exception();
         }
-
-        //if not expected status
         LOG.fatal(NOT_EXPECTED_STATUS);
-        return new Position();
+        return false;
     }
 }

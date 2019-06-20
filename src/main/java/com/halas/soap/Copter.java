@@ -1,4 +1,3 @@
-
 package com.halas.soap;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,9 +8,9 @@ import java.util.Objects;
 
 /**
  * <p>Java class for copter complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="copter">
  *   &lt;complexContent>
@@ -25,14 +24,12 @@ import java.util.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "copter", propOrder = {
-    "id",
-    "name",
-    "position"
+        "id",
+        "name",
+        "position"
 })
 public class Copter {
     protected Integer id;
@@ -41,11 +38,9 @@ public class Copter {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     * {@link Integer }
      */
     public Integer getId() {
         return id;
@@ -53,11 +48,9 @@ public class Copter {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
     public void setId(Integer value) {
         this.id = value;
@@ -65,11 +58,9 @@ public class Copter {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getName() {
         return name;
@@ -77,11 +68,9 @@ public class Copter {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;
@@ -89,11 +78,9 @@ public class Copter {
 
     /**
      * Gets the value of the position property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Position }
-     *     
+     *
+     * @return possible object is
+     * {@link Position }
      */
     public Position getPosition() {
         return position;
@@ -101,11 +88,9 @@ public class Copter {
 
     /**
      * Sets the value of the position property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Position }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Position }
      */
     public void setPosition(Position value) {
         this.position = value;
