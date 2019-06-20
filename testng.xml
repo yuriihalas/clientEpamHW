@@ -3,7 +3,8 @@
 <suite name="MySuite" verbose="1">
     <test name="MyTest" group-by-instances="true">
         <classes>
-            <class name="com.halas.SampleFactory"/>
+            <class name="com.halas.service.TestServicesCopters"/>
+            <class name="com.halas.service.TestErrorsCopters"/>
         </classes>
     </test>
 </suite>
