@@ -1,7 +1,7 @@
 package com.halas.rest;
 
 import com.halas.CopterService;
-import com.halas.DataProviderTypeService;
+import com.halas.DataProviders;
 import com.halas.factory.CopterFactory;
 import com.halas.factory.CopterServiceType;
 import com.halas.soap.*;
@@ -18,103 +18,98 @@ public class TestServicesCopters {
     private static final Logger LOG = LogManager.getLogger();
     private CopterServiceType typeService;
 
-    @Factory(dataProvider = "typeServiceData", dataProviderClass = DataProviderTypeService.class)
+    @Factory(dataProvider = "typeServiceData", dataProviderClass = DataProviders.class)
     public TestServicesCopters(CopterServiceType serviceType) {
         LOG.info("Type service: " + serviceType);
         this.typeService = serviceType;
     }
 
-    @Test
-    public void testCreateCopter() throws DuplicateCopterIdException_Exception {
+    @Test(dataProvider = "correctCoptersCreateData", dataProviderClass = DataProviders.class)
+    public void testCreateCopter(Copter copter) throws DuplicateCopterIdException_Exception {
         LOG.info("testCreateCopter.");
-        Copter copter = new Copter();
-        copter.setId(23);
-        copter.setName("Peterson");
-        copter.setPosition(new Position());
         CopterService copterService = CopterFactory.getService(typeService);
         copterService.createCopter(copter);
         boolean isCopterContainsInServer = copterService.getAllCopters().contains(copter);
         assertTrue(isCopterContainsInServer);
     }
 
-    @Test
-    public void testDeleteCopter() throws NoSuchCopterIdException_Exception {
+    @Test(dataProvider = "correctCoptersDeleteData", dataProviderClass = DataProviders.class)
+    public void testDeleteCopter(int idCopter) throws NoSuchCopterIdException_Exception {
         LOG.info("testDeleteCopter");
         CopterService copterService = CopterFactory.getService(typeService);
-        copterService.deleteCopter(23);
+        copterService.deleteCopter(idCopter);
         boolean isCopterContainsInServer = copterService.getAllCopters()
-                .stream().anyMatch(a -> a.getId().equals(23));
+                .stream().anyMatch(a -> a.getId().equals(idCopter));
         assertFalse(isCopterContainsInServer);
     }
 
-    @Test
-    public void testMoveToPositionById()
+    @Test(dataProvider = "correctCoptersMoveToPositionByIdData", dataProviderClass = DataProviders.class)
+    public void testMoveToPositionById(int idCopter, Position actualPosition)
             throws MaximumDistanceExceededException_Exception, NoSuchCopterIdException_Exception {
         LOG.info("testMoveToPositionById.");
         CopterService copterService = CopterFactory.getService(typeService);
-        Position actualPosition = new Position(0, 0, 33);
-        copterService.moveToPositionById(10, actualPosition);
+        copterService.moveToPositionById(idCopter, actualPosition);
         Position expectedPosition = copterService.getAllCopters()
-                .stream().filter(c -> c.getId() == 10)
+                .stream().filter(c -> c.getId() == (idCopter))
                 .findFirst().get().getPosition();
         assertEquals(expectedPosition, actualPosition);
     }
 
-    @Test
-    public void testMoveToPositionByIdWithDegree()
+    @Test(dataProvider = "correctCoptersMoveToPositionByIdWithDegreeData", dataProviderClass = DataProviders.class)
+    public void testMoveToPositionByIdWithDegree(int idCopter, double degreeForMove)
             throws MaximumDistanceExceededException_Exception, NoSuchCopterIdException_Exception {
         LOG.info("testMoveToPositionByIdWithDegree.");
         CopterService copterService = CopterFactory.getService(typeService);
-        Copter copter = copterService.findCopter(10);
+        Copter copter = copterService.findCopter(idCopter);
         double oldX = copter.getPosition().getCoordinateX();
         double oldY = copter.getPosition().getCoordinateY();
-        copterService.moveToPositionByIdWithDegree(10, 90.0);
+        copterService.moveToPositionByIdWithDegree(idCopter, degreeForMove);
         copter.getPosition().setCoordinateX(
-                ParserPolarSystem.getCartesianX(MOVE_COPTER_STEP, 90.0) + oldX);
+                ParserPolarSystem.getCartesianX(MOVE_COPTER_STEP, degreeForMove) + oldX);
         copter.getPosition().setCoordinateY(
-                ParserPolarSystem.getCartesianY(MOVE_COPTER_STEP, 90.0) + oldY);
+                ParserPolarSystem.getCartesianY(MOVE_COPTER_STEP, degreeForMove) + oldY);
         Position expectedPosition = copter.getPosition();
-        Position actualPosition = copterService.findCopter(10).getPosition();
+        Position actualPosition = copterService.findCopter(idCopter).getPosition();
         assertEquals(expectedPosition, actualPosition);
     }
 
-    @Test
-    public void testMoveUp()
+    @Test(dataProvider = "correctCoptersMoveUpData", dataProviderClass = DataProviders.class)
+    public void testMoveUp(int idCopter)
             throws NoSuchCopterIdException_Exception, MaximumDistanceExceededException_Exception {
         LOG.info("testMoveUp.");
         CopterService copterService = CopterFactory.getService(typeService);
-        Copter copter = copterService.findCopter(10);
+        Copter copter = copterService.findCopter(idCopter);
         double oldZ = copter.getPosition().getCoordinateZ();
-        copterService.moveUp(10);
+        copterService.moveUp(idCopter);
         copter.getPosition().setCoordinateZ(MOVE_COPTER_STEP + oldZ);
         Position expectedPosition = copter.getPosition();
-        Position actualPosition = copterService.findCopter(10).getPosition();
+        Position actualPosition = copterService.findCopter(idCopter).getPosition();
         assertEquals(expectedPosition, actualPosition);
     }
 
-    @Test
-    public void testMoveDown()
+    @Test(dataProvider = "correctCoptersMoveDownData", dataProviderClass = DataProviders.class)
+    public void testMoveDown(int idCopter)
             throws NoSuchCopterIdException_Exception, MaximumDistanceExceededException_Exception {
         LOG.info("testMoveDown.");
         CopterService copterService = CopterFactory.getService(typeService);
         Copter copter = copterService.findCopter(10);
         double oldZ = copter.getPosition().getCoordinateZ();
-        copterService.moveDown(10);
+        copterService.moveDown(idCopter);
         copter.getPosition().setCoordinateZ(oldZ - MOVE_COPTER_STEP);
         Position expectedPosition = copter.getPosition();
-        Position actualPosition = copterService.findCopter(10).getPosition();
+        Position actualPosition = copterService.findCopter(idCopter).getPosition();
         assertEquals(expectedPosition, actualPosition);
     }
 
-    @Test
-    public void testHoldPosition()
+    @Test(dataProvider = "correctCoptersHoldPositionData", dataProviderClass = DataProviders.class)
+    public void testHoldPosition(int idCopter)
             throws NoSuchCopterIdException_Exception {
         LOG.info("testHoldPosition.");
         CopterService copterService = CopterFactory.getService(typeService);
-        Copter copter = copterService.findCopter(10);
-        copterService.holdPosition(10);
+        Copter copter = copterService.findCopter(idCopter);
+        copterService.holdPosition(idCopter);
         Position expectedPosition = copter.getPosition();
-        Position actualPosition = copterService.findCopter(10).getPosition();
+        Position actualPosition = copterService.findCopter(idCopter).getPosition();
         assertEquals(expectedPosition, actualPosition);
     }
 }

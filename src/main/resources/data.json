@@ -1,0 +1,132 @@
+{
+  "createCopter": {
+    "correct": [
+      {
+        "name": "Peterson",
+        "id": 23,
+        "position": {
+          "coordinateZ": 0.0,
+          "coordinateY": 0.0,
+          "coordinateX": 0.0
+        }
+      }
+    ],
+    "unCorrect": [
+      {
+        "name": "Maxim",
+        "id": 10,
+        "position": {
+          "coordinateZ": 0.0,
+          "coordinateY": 0.0,
+          "coordinateX": 0.0
+        }
+      }
+    ]
+  },
+  "deleteCopter": {
+    "correct": [
+      {
+        "id": 23
+      }
+    ],
+    "unCorrect": [
+      {
+        "id": -1
+      }
+    ]
+  },
+  "moveToPositionById": {
+    "correct": [
+      {
+        "id": 10,
+        "position": {
+          "coordinateZ": 0.0,
+          "coordinateY": 0.0,
+          "coordinateX": 0.0
+        }
+      }
+    ],
+    "unCorrect": {
+      "maximumDistance": [
+        {
+          "id": 1,
+          "position": {
+            "coordinateZ": 0.0,
+            "coordinateY": 0.0,
+            "coordinateX": 100.0
+          }
+        }
+      ],
+      "noSuchId": [
+        {
+          "id": -1,
+          "position": {
+            "coordinateZ": 0.0,
+            "coordinateY": 0.0,
+            "coordinateX": 0.0
+          }
+        }
+      ]
+    }
+  },
+  "moveToPositionByIdWithDegree": {
+    "correct": [
+      {
+        "id": 10,
+        "degree": 90.0
+      }
+    ],
+    "unCorrect": [
+      {
+        "id": 0,
+        "degree": 90.0
+      }
+    ]
+  },
+  "moveUp": {
+    "correct": [
+      {
+        "id": 10
+      }
+    ],
+    "unCorrect": [
+      {
+        "id": 1,
+        "position": {
+          "coordinateZ": 90.0,
+          "coordinateY": 0.0,
+          "coordinateX": 0.0
+        }
+      }
+    ]
+  },
+  "moveDown": {
+    "correct": [
+      {
+        "id": 10
+      }
+    ],
+    "unCorrect": [
+      {
+        "id": 2,
+        "position": {
+          "coordinateZ": -90.0,
+          "coordinateY": 0.0,
+          "coordinateX": 0.0
+        }
+      }
+    ]
+  },
+  "holdPosition": {
+    "correct": [
+      {
+        "id": 10
+      }
+    ],
+    "unCorrect": [
+      {
+        "id": 0
+      }
+    ]
+  }
+}
