@@ -1,4 +1,4 @@
-package com.halas.service;
+package com.halas.rest;
 
 import com.halas.CopterService;
 import com.halas.DataProviderTypeService;
@@ -24,7 +24,7 @@ public class TestErrorsCopters {
     public void testCreateExistCopter() throws DuplicateCopterIdException_Exception {
         LOG.info("testCreateExistsCopter.");
         Copter copter = new Copter();
-        copter.setId(10);
+        copter.setId(1);
         copter.setName("");
         copter.setPosition(new Position());
         CopterService copterService = CopterFactory.getService(typeService);
@@ -43,7 +43,34 @@ public class TestErrorsCopters {
             throws NoSuchCopterIdException_Exception, MaximumDistanceExceededException_Exception {
         LOG.info("testMoveToPositionMaximumDistance.");
         CopterService copterService = CopterFactory.getService(typeService);
-        Position actualPosition = new Position(0, 0, 100);
-        copterService.moveToPositionById(10, actualPosition);
+        Position position = new Position(0, 0, 100);
+        copterService.moveToPositionById(1, position);
+    }
+
+    @Test(expectedExceptions = NoSuchCopterIdException_Exception.class)
+    public void testMoveToPositionWithNoExistId()
+            throws NoSuchCopterIdException_Exception, MaximumDistanceExceededException_Exception {
+        LOG.info("testMoveToPositionWithNoExistId.");
+        CopterService copterService = CopterFactory.getService(typeService);
+        Position position = new Position(0, 0, 0);
+        copterService.moveToPositionById(-1, position);
+    }
+
+    @Test(expectedExceptions = MaximumDistanceExceededException_Exception.class)
+    public void testMoveUpMaximumDistance()
+            throws NoSuchCopterIdException_Exception, MaximumDistanceExceededException_Exception {
+        LOG.info("testMoveUpMaximumDistance.");
+        CopterService copterService = CopterFactory.getService(typeService);
+        copterService.moveToPositionById(1, new Position(0, 0, 90));
+        copterService.moveUp(1);
+    }
+
+    @Test(expectedExceptions = MaximumDistanceExceededException_Exception.class)
+    public void testMoveDownMaximumDistance()
+            throws NoSuchCopterIdException_Exception, MaximumDistanceExceededException_Exception {
+        LOG.info("testMoveDownMaximumDistance.");
+        CopterService copterService = CopterFactory.getService(typeService);
+        copterService.moveToPositionById(2, new Position(0, 0, -90));
+        copterService.moveDown(2);
     }
 }

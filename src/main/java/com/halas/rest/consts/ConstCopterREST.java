@@ -1,4 +1,4 @@
-package com.halas.service.consts;
+package com.halas.rest.consts;
 
 public class ConstCopterREST {
     public static final String SUCCESS_ACTION = "The action was SUCCESSFUL.";

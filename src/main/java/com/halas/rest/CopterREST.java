@@ -1,4 +1,4 @@
-package com.halas.service;
+package com.halas.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.halas.CopterService;
@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.halas.service.consts.ConstCopterREST.*;
+import static com.halas.rest.consts.ConstCopterREST.*;
 
 public class CopterREST implements CopterService {
     private static final Logger LOG = LogManager.getLogger(CopterREST.class);
@@ -32,7 +32,7 @@ public class CopterREST implements CopterService {
         LOG.info("method getAllCopters.");
         ResponseEntity<Object> copterResponse = restTemplate.exchange(GET_ALL_COPTERS_URL,
                 HttpMethod.GET, null, Object.class);
-        if (copterResponse.getStatusCode() != HttpStatus.ACCEPTED) {
+        if (copterResponse.getStatusCode() != HttpStatus.OK) {
             LOG.warn(EMPTY_LIST_COPTERS);
             return new ArrayList<>();
         }

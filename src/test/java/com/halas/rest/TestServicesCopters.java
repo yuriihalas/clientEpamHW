@@ -1,4 +1,4 @@
-package com.halas.service;
+package com.halas.rest;
 
 import com.halas.CopterService;
 import com.halas.DataProviderTypeService;

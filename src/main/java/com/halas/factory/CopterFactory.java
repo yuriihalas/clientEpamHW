@@ -1,7 +1,7 @@
 package com.halas.factory;
 
 import com.halas.CopterService;
-import com.halas.service.CopterREST;
+import com.halas.rest.CopterREST;
 import com.halas.soap.CopterSOAP;
 
 public class CopterFactory {
